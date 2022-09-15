@@ -18,7 +18,12 @@ train_loader = DataLoader(train_dataset, shuffle=True, batch_size=batch_size)
 test_dataset = datasets.MNIST(root='datas/MNIST', train=False, download=True, transform=transform)
 test_loader = DataLoader(test_dataset, shuffle=False, batch_size=batch_size)
 
-
+# train_data = datasets.FashionMNIST(root='datas', train=True, transform=transform, download=True)
+# test_data = datasets.FashionMNIST(root='datas', train=False, transform=transform, download=True)
+#
+# batch_size = 256
+# train_loader = DataLoader(dataset=train_data, shuffle=True, batch_size=batch_size, num_workers=2)
+# test_loader = DataLoader(dataset=test_data, shuffle=False, batch_size=batch_size, num_workers=2)
 # Build the model
 class MultiClassification(torch.nn.Module):
     def __init__(self):
