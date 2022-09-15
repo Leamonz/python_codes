@@ -217,30 +217,30 @@
 #     print(f"\tFull name: {full_name}")
 #     print(f"\tLocation: {location}")
 
-# people = []
-# SpongeBob = {
-#     'first': 'SpongeBob',
-#     'last': 'SquarePants',
-#     'age': 18,
-#     'city': 'Bikini Bottom'
-# }
-# people.append(SpongeBob)
-# Patric = {
-#     'first': 'Patric',
-#     'last': 'Star',
-#     'age': 17,
-#     'city': 'Bikini Bottom'
-# }
-# people.append(Patric)
-# Hubert = {
-#     'first': 'Hubert',
-#     'last': 'Zheng',
-#     'age': 19,
-#     'city': 'Ganzhou'
-# }
-# people.append(Hubert)
-# for person in people:
-#     full_name = f"{person['first']} {person['last']}"
-#     print("Full name: " + full_name)
-#     print("Age: " + str(person['age']))
-#     print("City: " + person['city'])
+people = []
+SpongeBob = {
+    'first': 'SpongeBob',
+    'last': 'SquarePants',
+    'age': 18,
+    'city': 'Bikini Bottom'
+}
+people.append(SpongeBob)
+Patric = {
+    'first': 'Patric',
+    'last': 'Star',
+    'age': 17,
+    'city': 'Bikini Bottom'
+}
+people.append(Patric)
+Hubert = {
+    'first': 'Hubert',
+    'last': 'Zheng',
+    'age': 19,
+    'city': 'Ganzhou'
+}
+people.append(Hubert)
+for person in people:
+    full_name = f"{person['first']} {person['last']}"
+    print("Full name: " + full_name)
+    print("Age: " + str(person['age']))
+    print("City: " + person['city'])

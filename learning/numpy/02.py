@@ -78,26 +78,26 @@ import numpy as np
 # print(y[b])
 # c = np.argpartition(y, -2)
 # print(y[c])
-x = np.arange(1, 7)
-print(x)
-print(id(x))
-# y = x
+# x = np.arange(1, 7)
+# print(x)
+# print(id(x))
+# # y = x
+# # print(y)
+# # print(id(y))
+# # y.shape = (3, 2)
+# # print(y)
+# # print(x)
+# y = x.view()
 # print(y)
 # print(id(y))
-# y.shape = (3, 2)
+# y[2] = 30
+# print(x, '\n', y)
+# z = x[2:]
+# print(z)
+# z[1] = 400
+# print(z)
 # print(y)
 # print(x)
-y = x.view()
-print(y)
-print(id(y))
-y[2] = 30
-print(x, '\n', y)
-z = x[2:]
-print(z)
-z[1] = 400
-print(z)
-print(y)
-print(x)
-
-a = slice(x, 2)
-print(a)
+#
+# a = slice(x, 2)
+# print(a)
