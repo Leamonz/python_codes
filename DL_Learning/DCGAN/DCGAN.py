@@ -14,11 +14,12 @@ class Discriminator(nn.Module):
     def __init__(self, img_channels, features_d):
         super(Discriminator, self).__init__()
         self.disc = nn.Sequential(
-            nn.Conv2d(img_channels, features_d * 2, 4, 2, 1),
+            nn.Conv2d(img_channels, features_d, 4, 2, 1),
             nn.LeakyReLU(0.2),
+            self.block(features_d, features_d * 2, 4, 2, 1),
             self.block(features_d * 2, features_d * 4, 4, 2, 1),
             self.block(features_d * 4, features_d * 8, 4, 2, 1),
-            self.block(features_d * 8, features_d * 16, 4, 2, 1),
+            nn.Conv2d(features_d * 8, 1, kernel_size=4, stride=2, padding=0),
             nn.Sigmoid()
         )
 

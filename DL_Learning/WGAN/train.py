@@ -13,7 +13,7 @@ from model import Discriminator
 from model import Generator
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-lr = 5e-4
+lr = 5e-5
 BATCH_SIZE = 32
 IMAGE_SIZE = 64
 IMG_CHANNELS = 1
@@ -83,17 +83,22 @@ if __name__ == "__main__":
             opt_gen.step()
 
             if batch_idx == BATCH_SIZE:
+                gen.eval()
+                disc.eval()
                 print(f"Epoch:{epoch + 1}/{NUM_EPOCHS}, lossD:{loss_D:.4f}, lossG:{loss_G:.4f}")
 
                 with torch.no_grad():
-                    img_grid_real = torchvision.utils.make_grid(real, normalize=True)
-                    img_grid_fake = torchvision.utils.make_grid(fake, normalize=True)
+                    fake = gen(fixed_noise)
+                    img_grid_real = torchvision.utils.make_grid(real[:32], normalize=True)
+                    img_grid_fake = torchvision.utils.make_grid(fake[:32], normalize=True)
 
                     writer_fake.add_image("MNIST fake images", img_grid_fake, global_step=step)
                     writer_real.add_image("MNIST real images", img_grid_real, global_step=step)
 
-                    step += 1
-                    torchvision.utils.save_image(img_grid_real, r'./samples/real/{:d}.png'.format(step))
-                    torchvision.utils.save_image(img_grid_fake, r'./samples/fake/{:d}.png'.format(step))
-                    torch.save(disc.state_dict(), r'./checkpoints/Discriminator.ckpt')
-                    torch.save(gen.state_dict(), r'./checkpoints/Generator.ckpt')
+                step += 1
+                torchvision.utils.save_image(img_grid_real, r'./samples/real/{:d}.png'.format(step))
+                torchvision.utils.save_image(img_grid_fake, r'./samples/fake/{:d}.png'.format(step))
+                torch.save(disc.state_dict(), r'./checkpoints/Discriminator.ckpt')
+                torch.save(gen.state_dict(), r'./checkpoints/Generator.ckpt')
+                gen.train()
+                disc.train()
