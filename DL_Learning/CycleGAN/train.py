@@ -89,10 +89,10 @@ def main():
     MSE = nn.MSELoss()
 
     if config.LOAD_MODEL:
-        load_checkpoint(config.CHECKPOINT_GEN_M, gen_M, opt_gen, config.LEARNING_RATE)
-        load_checkpoint(config.CHECKPOINT_GEN_P, gen_P, opt_gen, config.LEARNING_RATE)
-        load_checkpoint(config.CHECKPOINT_DISC_M, disc_M, opt_disc, config.LEARNING_RATE)
-        load_checkpoint(config.CHECKPOINT_DISC_P, disc_P, opt_disc, config.LEARNING_RATE)
+        load_checkpoint(config.MODEL_PATH + '/' + config.CHECKPOINT_GEN_M, gen_M, opt_gen, config.LEARNING_RATE)
+        load_checkpoint(config.MODEL_PATH + '/' + config.CHECKPOINT_GEN_P, gen_P, opt_gen, config.LEARNING_RATE)
+        load_checkpoint(config.MODEL_PATH + '/' + config.CHECKPOINT_DISC_M, disc_M, opt_disc, config.LEARNING_RATE)
+        load_checkpoint(config.MODEL_PATH + '/' + config.CHECKPOINT_DISC_P, disc_P, opt_disc, config.LEARNING_RATE)
     dataset = MonetPhotoDataset(root_Monet=config.TRAIN_DIR + '/monet',
                                 root_Photo=config.TRAIN_DIR + '/photo',
                                 transforms=config.transforms)

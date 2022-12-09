@@ -13,14 +13,14 @@ LEARNING_RATE = 2e-4
 LAMBDA_IDENTITY = 0.0
 LAMBDA_CYCLE = 10
 NUM_WORKERS = 0
-NUM_EPOCHS = 10
+NUM_EPOCHS = 20
 LOAD_MODEL = True
 SAVE_MODEL = True
 MODEL_PATH = "./models"
 CHECKPOINT_GEN_M = "GenMonet.pth"
 CHECKPOINT_GEN_P = "GenPhoto.pth"
 CHECKPOINT_DISC_M = "DiscMonet.pth"
-CHECKPOINT_DISC_P = "GenPhoto.pth"
+CHECKPOINT_DISC_P = "DiscPhoto.pth"
 
 transforms = A.Compose(
     [
