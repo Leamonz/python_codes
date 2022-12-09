@@ -84,7 +84,7 @@ transforms = transforms.Compose([
     transforms.Normalize([0.5 for _ in range(img_channels)], [0.5 for _ in range(img_channels)]),
 ])
 name = 'MNIST'
-dataset = datasets.MNIST(root=r'../../dataset', transform=transforms)
+dataset = datasets.MNIST(root=r'D:/program_work/PyCharm/Usual/dataset', transform=transforms)
 # dataset = datasets.CelebA(root=r'../../dataset', transform=transforms, download=True)
 loader = DataLoader(dataset=dataset, shuffle=True, batch_size=batch_size)
 gen = Generator(z_dim, img_channels, feature_g).to(device)
