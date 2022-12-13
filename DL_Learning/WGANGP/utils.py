@@ -1,5 +1,6 @@
 import torch
 
+
 def gradient_penalty(disc, real, fake, device):
     BATCH_SIZE, C, H, W = real.shape
     eps = torch.rand((BATCH_SIZE, 1, 1, 1)).repeat(1, C, H, W).to(device)

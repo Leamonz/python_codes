@@ -13,6 +13,7 @@ from model import Discriminator
 from model import Generator
 from utils import gradient_penalty
 from dataset import WGANDataset
+from time import time
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 lr = 1e-4
@@ -49,14 +50,23 @@ fixed_noise = torch.randn((BATCH_SIZE, Z_DIM, 1, 1)).to(device)
 def train():
     gen.train()
     disc.train()
+    if os.path.exists('./checkpoints/Discriminator.ckpt'):
+        disc.load_state_dict(torch.load('./checkpoints/Discriminator.ckpt'))
+        print("==> Loading Discriminator")
+    if os.path.exists('./checkpoints/Generator.ckpt'):
+        gen.load_state_dict(torch.load('./checkpoints/Generator.ckpt'))
+        print("==> Loading Generator")
+
     count: int = 0
     print("============Training Starts============")
     for epoch in range(NUM_EPOCHS):
+        start = time()
         for batch_idx, real in enumerate(loader):
             real = real.to(device)
             loss_D = 0
+            batch_size = real.shape[0]
             for _ in range(NUM_DISC):
-                noise = torch.randn((BATCH_SIZE, Z_DIM, 1, 1)).to(device)
+                noise = torch.randn((batch_size, Z_DIM, 1, 1)).to(device)
                 fake = gen(noise)
                 disc_fake = disc(fake).view(-1)
                 disc_real = disc(real).view(-1)
@@ -66,7 +76,7 @@ def train():
                 loss_D.backward()
                 opt_disc.step()
 
-            noise = torch.randn((BATCH_SIZE, Z_DIM, 1, 1)).to(device)
+            noise = torch.randn((batch_size, Z_DIM, 1, 1)).to(device)
             fake = gen(noise)
             output = disc(fake).view(-1)
             loss_G = - torch.mean(output)
@@ -85,12 +95,16 @@ def train():
                     img_grid_fake = torchvision.utils.make_grid(fake, normalize=True)
 
                     torchvision.utils.save_image(img_grid_real,
-                                                 "{:s}/epoch{:d}_real{:d}.png".format('./samples', epoch, count))
+                                                 "{:s}/epoch{:d}_real{:d}.png".format('./samples/real', epoch + 1,
+                                                                                      count + 1))
                     torchvision.utils.save_image(img_grid_fake,
-                                                 "{:s}/epoch{:d}_real{:d}.png".format('./samples', epoch, count))
+                                                 "{:s}/epoch{:d}_fake{:d}.png".format('./samples/fake', epoch + 1,
+                                                                                      count + 1))
 
                     gen.train()
                     disc.train()
+        end = time()
+        print(f"Time taken: {(end - start) * 1000:.2f}s")
         torch.save(disc.state_dict(), r'./checkpoints/Discriminator.ckpt')
         torch.save(gen.state_dict(), r'./checkpoints/Generator.ckpt')
 
