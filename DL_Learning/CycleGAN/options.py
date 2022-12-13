@@ -12,8 +12,10 @@ parser.add_argument('--lr', type=float, default=2e-4)
 parser.add_argument('--lambda_cycle', type=float, default=10.0)
 parser.add_argument('--epochs', type=int, default=20)
 parser.add_argument('--sample_interval', type=int, default=200)
-parser.add_argument('--load_model', action='store_true', default=True)
-parser.add_argument('--save_model', action='store_true', default=True)
+parser.add_argument('--load_model', action='store_true')
+parser.add_argument('--save_model', action='store_true')
+
+parser.add_argument('--result_path', type=str, default='./results')
 
 args = parser.parse_args()
 print(args)

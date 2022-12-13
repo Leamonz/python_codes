@@ -36,3 +36,27 @@ class MonetPhotoDataset(Dataset):
             monet, photo = augs['image'], augs['image0']
 
         return monet, photo
+
+
+class testDataset(Dataset):
+    def __init__(self, root, transforms=None):
+        super(testDataset, self).__init__()
+        self.root = root
+        self.transforms = transforms
+
+        self.images = os.listdir(self.root)
+        self.len = len(self.images)
+
+    def __len__(self):
+        return self.len
+
+    def __getitem__(self, index):
+        img = self.images[index]
+        img = self.root + '/' + img
+        img = Image.open(img).convert("RGB")
+        img = np.asarray(img)
+        if self.transforms:
+            augs = self.transforms(image=img)
+            img = augs['image']
+
+        return img
