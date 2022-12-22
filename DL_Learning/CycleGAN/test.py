@@ -28,7 +28,7 @@ def main():
                          lr=config.LEARNING_RATE,
                          betas=(0.5, 0.999))
     load_checkpoint(config.MODEL_PATH + '/' + config.CHECKPOINT_GEN_P, gen, opt_gen, config.LEARNING_RATE)
-    dataset = testDataset(config.TEST_DIR, transforms=config.transforms)
+    dataset = testDataset(config.TEST_DIR, transforms=config.test_transforms)
     loader = DataLoader(dataset=dataset, shuffle=False, batch_size=config.BATCH_SIZE)
     test(gen, loader)
 
