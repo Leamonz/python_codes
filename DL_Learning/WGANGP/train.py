@@ -31,7 +31,7 @@ transform = transforms.Compose([
     transforms.Normalize([0.5 for _ in range(IMG_CHANNELS)], [0.5 for _ in range(IMG_CHANNELS)])
 ])
 
-dataset = datasets.MNIST(root=r'../../dataset', transform=transform)
+dataset = datasets.CelebA(root=r'../../dataset', transform=transform, download=True)
 dataloader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True)
 disc = Discriminator(IMG_CHANNELS, FEATURE_DISC).to(device)
 gen = Generator(Z_DIM, IMG_CHANNELS, FEATURE_GEN).to(device)
@@ -91,8 +91,8 @@ if __name__ == "__main__":
                     img_grid_real = torchvision.utils.make_grid(real[:32], normalize=True)
                     img_grid_fake = torchvision.utils.make_grid(fake[:32], normalize=True)
 
-                    writer_fake.add_image("MNIST fake images", img_grid_fake, global_step=step)
-                    writer_real.add_image("MNIST real images", img_grid_real, global_step=step)
+                    writer_fake.add_image("CelebA fake images", img_grid_fake, global_step=step)
+                    writer_real.add_image("CelebA real images", img_grid_real, global_step=step)
 
                 step += 1
                 torchvision.utils.save_image(img_grid_real, r'./samples/real/epoch{:d}.png'.format(step))

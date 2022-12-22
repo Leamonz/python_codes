@@ -21,12 +21,13 @@ BATCH_SIZE = 32
 IMAGE_SIZE = 64
 IMG_CHANNELS = 3
 Z_DIM = 100
-NUM_EPOCHS = 10
+NUM_EPOCHS = 100
 FEATURE_DISC = 64
 FEATURE_GEN = 64
 NUM_DISC = 5
 LAMBDA_GP = 10
 MODE = 'train'
+RESULT_PATH = './results'
 
 transform = transforms.Compose([
     transforms.Resize([IMAGE_SIZE, IMAGE_SIZE]),
@@ -34,7 +35,7 @@ transform = transforms.Compose([
     transforms.Normalize([0.5 for _ in range(IMG_CHANNELS)], [0.5 for _ in range(IMG_CHANNELS)])
 ])
 
-dataset = WGANDataset('../../dataset/CelebA/train', transform)
+dataset = WGANDataset('../../dataset/avatar/data', transform)
 loader = DataLoader(dataset, BATCH_SIZE, shuffle=True)
 disc = Discriminator(IMG_CHANNELS, FEATURE_DISC).to(device)
 gen = Generator(Z_DIM, IMG_CHANNELS, FEATURE_GEN).to(device)
@@ -104,7 +105,7 @@ def train():
                     gen.train()
                     disc.train()
         end = time()
-        print(f"Time taken: {(end - start) * 1000:.2f}s")
+        print(f"Time taken: {(end - start):.2f}s")
         torch.save(disc.state_dict(), r'./checkpoints/Discriminator.ckpt')
         torch.save(gen.state_dict(), r'./checkpoints/Generator.ckpt')
 
@@ -114,10 +115,10 @@ def test():
     gen.load_state_dict(torch.load('./checkpoints/Generator.ckpt'))
     disc.eval()
     gen.eval()
-    random_noise = torch.randn(IMG_CHANNELS, IMAGE_SIZE, IMAGE_SIZE)
+    random_noise = torch.randn(Z_DIM, 1, 1).to(device)
     fake = gen(random_noise)
     print("Image Generated!")
-    torchvision.utils.save_image(fake, './results/GeneratedImage')
+    torchvision.utils.save_image(fake, '{:s}/GeneratedImage.png'.format(RESULT_PATH))
 
 
 if __name__ == '__main__':
