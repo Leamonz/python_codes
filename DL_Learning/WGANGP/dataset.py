@@ -6,7 +6,7 @@ from PIL import Image
 
 
 class WGANDataset(Dataset):
-    def __init__(self, root, transforms):
+    def __init__(self, root, transforms=None):
         super(WGANDataset, self).__init__()
         self.root = root
         self.transforms = transforms
@@ -22,6 +22,7 @@ class WGANDataset(Dataset):
         path = self.root + '/' + img
         real = Image.open(path)
 
-        real = self.transforms(real)
+        if transforms is not None:
+            real = self.transforms(real)
 
         return real
