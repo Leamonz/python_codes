@@ -1,22 +1,19 @@
 import os
 from PIL import Image
 import numpy as np
+from torchvision import transforms
 
 if __name__ == "__main__":
-    o_path = r'D:\Program_work\PyCharm\Usual\dataset\CelebA\img_align_celeba'
-    t_path = r'D:\Program_work\PyCharm\Usual\dataset\CelebA\train'
+    resize = transforms.Resize([256, 256])
+    o_path = r'D:\Program_work\PyCharm\PaperRepo\dataset\GUOHUA_SHUIMO\test'
+    t_path = r'D:\Program_work\PyCharm\PaperRepo\dataset\GUOHUA_SHUIMO\test'
     images = os.listdir(o_path)
-    len = len(images)
-    NUM_IMAGES = 5000
-    count = 0
-    for i in range(NUM_IMAGES):
-        index = int(np.random.rand() * len)
-        name = images[index]
-        path = o_path + '/' + name
-        image = Image.open(path)
-        path = t_path + '/{:05d}.png'.format(i + 1)
-        image.save(path)
+    count = 1
+    for file in images:
+        image_path = os.path.join(o_path, file)
+        image = Image.open(image_path)
+        image = resize(image)
+        target_path = os.path.join(o_path, '{:d}.png'.format(count))
         count += 1
-        if count % 500 == 0:
-            print(f"rest/total: [{count}/{NUM_IMAGES}]")
+        image.save(target_path)
     print("Transmission Complete")

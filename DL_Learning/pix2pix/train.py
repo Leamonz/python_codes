@@ -10,9 +10,10 @@ from discriminator import Discriminator
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from torchvision.utils import save_image
+from time import time
 
 
-def train(gen, disc, opt_gen, opt_disc, BCE, L1_Loss, train_loader, g_scaler, d_scaler):
+def train(gen, disc, opt_gen, opt_disc, BCE, L1_Loss, train_loader, g_scaler, d_scaler, epoch):
     loop = tqdm(train_loader, leave=True)
     for batch_idx, (x, y) in enumerate(loop):
         x, y = x.to(config.DEVICE), y.to(config.DEVICE)
@@ -56,20 +57,25 @@ def main():
 
     g_scaler = torch.cuda.amp.GradScaler()
     d_scaler = torch.cuda.amp.GradScaler()
-    train_dataset = Pix2PixDataset(root_dir='../../dataset/Pix2Pix/maps/train')
+    train_dataset = Pix2PixDataset(root_dir='../../dataset/Pix2Pix/data/train')
     train_loader = DataLoader(dataset=train_dataset, shuffle=True, batch_size=config.BATCH_SIZE,
                               num_workers=config.NUM_WORKERS)
-    val_dataset = Pix2PixDataset(root_dir='../../dataset/Pix2Pix/maps/val')
+    val_dataset = Pix2PixDataset(root_dir='../../dataset/Pix2Pix/data/val')
     val_loader = DataLoader(dataset=val_dataset, shuffle=False, batch_size=config.BATCH_SIZE)
 
     for epoch in range(config.NUM_EPOCHS):
-        train(gen, disc, opt_gen, opt_disc, BCE, L1_Loss, train_loader, g_scaler, d_scaler)
+        print(f"=========Epoch{epoch + 1} Starts!=========")
+        start = time()
+        train(gen, disc, opt_gen, opt_disc, BCE, L1_Loss, train_loader, g_scaler, d_scaler, epoch)
 
         if config.SAVE_MODEL and epoch % 5 == 0:
             save_checkpoint(gen, opt_gen, config.CHECKPOINT_GEN)
             save_checkpoint(disc, opt_disc, config.CHECKPOINT_DISC)
 
         save_some_examples(gen, val_loader, epoch, folder='./evaluation')
+        end = time()
+        print(f"=========Epoch{epoch + 1} Ends!=========")
+        print(f"Time Taken: {end - start}s")
 
 
 if __name__ == '__main__':

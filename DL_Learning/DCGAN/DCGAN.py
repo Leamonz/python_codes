@@ -3,11 +3,12 @@ import os
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 import torchvision
 import torchvision.datasets as datasets
 import torchvision.transforms as transforms
 from torch.utils.tensorboard import SummaryWriter
+from PIL import Image
 
 
 class Discriminator(nn.Module):
@@ -70,11 +71,29 @@ def Initialize_weights(model):
             nn.init.normal_(m.weight.data, 0.0, 0.02)
 
 
+class GanYuDataset(Dataset):
+    def __init__(self, root_dir, transform=None):
+        self.root_dir = root_dir
+        self.image_files = os.listdir(self.root_dir)
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.image_files)
+
+    def __getitem__(self, index):
+        image_path = os.path.join(self.root_dir, self.image_files[index])
+        image = Image.open(image_path).convert("RGB")
+        if self.transform is not None:
+            image = self.transform(image)
+
+        return image
+
+
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 lr = 3e-4
 batch_size = 128
 img_size = 64
-img_channels = 1
+img_channels = 3
 z_dim = 100
 num_epochs = 50
 feature_d = feature_g = 64
@@ -83,9 +102,11 @@ transforms = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize([0.5 for _ in range(img_channels)], [0.5 for _ in range(img_channels)]),
 ])
-name = 'MNIST'
-dataset = datasets.MNIST(root=r'D:/program_work/PyCharm/Usual/dataset', transform=transforms)
+
+name = 'GanYu'
+# dataset = datasets.MNIST(root=r'D:/program_work/PyCharm/Usual/dataset', transform=transforms)
 # dataset = datasets.CelebA(root=r'../../dataset', transform=transforms, download=True)
+dataset = GanYuDataset('../../dataset/ganyu-final', transform=transforms)
 loader = DataLoader(dataset=dataset, shuffle=True, batch_size=batch_size)
 gen = Generator(z_dim, img_channels, feature_g).to(device)
 disc = Discriminator(img_channels, feature_d).to(device)
@@ -93,11 +114,9 @@ opt_disc = optim.Adam(disc.parameters(), lr=lr, betas=(0.5, 0.999))
 opt_gen = optim.Adam(gen.parameters(), lr=lr, betas=(0.5, 0.999))
 criterion = nn.BCELoss()
 fixed_noise = torch.randn((batch_size, z_dim, 1, 1)).to(device)
-writer_fake = SummaryWriter(r'./runs/DCGAN_MNIST/fake')
-writer_real = SummaryWriter(r'./runs/DCGAN_MNIST/real')
 step = 0
-disc_path = r'./checkpoints/Discriminator_MNIST.ckpt'
-gen_path = r'./checkpoints/Generator_MNIST.ckpt'
+disc_path = r'./checkpoints/Discriminator.ckpt'
+gen_path = r'./checkpoints/Generator.ckpt'
 
 if __name__ == "__main__":
     Initialize_weights(gen)
@@ -109,7 +128,7 @@ if __name__ == "__main__":
         gen.load_state_dict(torch.load(gen_path))
         print("Generator loaded")
     for epoch in range(num_epochs):
-        for batch_idx, (real, _) in enumerate(loader):
+        for batch_idx, real in enumerate(loader):
             real = real.to(device)
             noise = torch.randn((batch_size, z_dim, 1, 1)).to(device)
 
@@ -136,18 +155,11 @@ if __name__ == "__main__":
         )
 
         with torch.no_grad():
-            fake = gen(fixed_noise).reshape(-1, 1, img_size, img_size)
-            gt = real.reshape(-1, 1, img_size, img_size)
-            img_grid_fake = torchvision.utils.make_grid(fake, normalize=True)
-            img_grid_real = torchvision.utils.make_grid(gt, normalize=True)
+            fake = gen(fixed_noise).reshape(-1, img_channels, img_size, img_size)
+            gt = real.reshape(-1, img_channels, img_size, img_size)
+            img_grid_fake = torchvision.utils.make_grid(fake[:32], normalize=True)
+            img_grid_real = torchvision.utils.make_grid(gt[:32], normalize=True)
 
-            writer_fake.add_image(
-                "MNIST Fake Images", img_grid_fake, global_step=step
-            )
-
-            writer_real.add_image(
-                "MNIST Real Images", img_grid_real, global_step=step
-            )
             step += 1
             torchvision.utils.save_image(img_grid_real, r'./runs/%s/real/epoch_%d.png' % (name, step))
             torchvision.utils.save_image(img_grid_fake, r'./runs/%s/fake/epoch_%d.png' % (name, step))

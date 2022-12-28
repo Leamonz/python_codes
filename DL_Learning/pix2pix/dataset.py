@@ -16,8 +16,8 @@ class Pix2PixDataset(Dataset):
     def __getitem__(self, index):
         image = Image.open(os.path.join(self.root_dir, self.list_files[index]))
         image = np.asarray(image)
-        input_image = image[:, :600, :]
-        target_image = image[:, 600:, :]
+        input_image = image[:, 512:, :]
+        target_image = image[:, :512, :]
         # Augmentations
         augmentations = config.both_transform(image=input_image, image0=target_image)
         input_image, target_image = augmentations['image'], augmentations['image0']

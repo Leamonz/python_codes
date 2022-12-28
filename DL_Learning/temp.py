@@ -66,4 +66,23 @@ import torch
 # help(torch.nn.Linear)
 
 # help(enumerate)
-help(torch.nn.Conv2d)
+# help(torch.nn.Conv2d)
+# a = np.array([1, 2, 3])
+# a = np.append(a, 4)
+# print(a)
+if __name__ == "__main__":
+    # a = np.arange(12).reshape(3, 4)
+    # b = np.ones_like(a)
+    # b1 = np.ones_like(a)
+    # b2 = np.ones_like(a)
+    # li = np.array([a, b, b1, b2])
+    # print(li)
+    # print(a)
+    # print(b)
+    # # c = np.vstack(li[:1] + li[2:])
+    # print(li[:1])
+    # print(li[2:])
+    # c = li[:1] + li[2:]
+    # print(c)
+    pass
+
