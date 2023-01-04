@@ -9,7 +9,6 @@ from generator import Generator
 from discriminator import Discriminator
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from torchvision.utils import save_image
 from time import time
 
 
@@ -57,10 +56,10 @@ def main():
 
     g_scaler = torch.cuda.amp.GradScaler()
     d_scaler = torch.cuda.amp.GradScaler()
-    train_dataset = Pix2PixDataset(root_dir='../../dataset/Pix2Pix/data/train')
+    train_dataset = Pix2PixDataset(root_dir='../../dataset/Pix2Pix/data/train', transforms=config.both_transform)
     train_loader = DataLoader(dataset=train_dataset, shuffle=True, batch_size=config.BATCH_SIZE,
                               num_workers=config.NUM_WORKERS)
-    val_dataset = Pix2PixDataset(root_dir='../../dataset/Pix2Pix/data/val')
+    val_dataset = Pix2PixDataset(root_dir='../../dataset/Pix2Pix/data/val', transforms=config.both_transform)
     val_loader = DataLoader(dataset=val_dataset, shuffle=False, batch_size=config.BATCH_SIZE)
 
     for epoch in range(config.NUM_EPOCHS):
