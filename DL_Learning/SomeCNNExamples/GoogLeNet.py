@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from torch.optim.lr_scheduler import *
 from torch.utils.data import DataLoader
 import torchvision
 import torchvision.datasets as datasets
@@ -146,6 +147,9 @@ test_dataset = datasets.CIFAR10(root=r'D:\Program_work\PyCharm\Usual\dataset', t
 test_loader = DataLoader(test_dataset, shuffle=False,
                          batch_size=BATCH_SIZE)
 optimizer = optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=MOMENTUM)
+scheduler1 = StepLR(optimizer, step_size=8, gamma=0.96, verbose=True)
+scheduler2 = ReduceLROnPlateau(optimizer, mode='max', factor=0.1, threshold=0.5, threshold_mode='abs', verbose=True,
+                               patience=2, min_lr=1e-5)
 criterion = nn.CrossEntropyLoss()
 
 
@@ -175,11 +179,15 @@ def test():
             _, pred_label = torch.max(output, dim=1)
             total += label.shape[0]
             num_correct += (pred_label == label).sum().item()
-    print("Accuracy: {:.2f}%".format(num_correct / total * 100))
+    acc = num_correct / total * 100
+    print("Accuracy: {:.2f}%".format(acc))
     model.train()
+    return acc
 
 
 if __name__ == "__main__":
     for epoch in range(NUM_EPOCHS):
         train(epoch)
-        test()
+        accuracy = test()
+        scheduler1.step()
+        scheduler2.step(accuracy)

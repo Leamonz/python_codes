@@ -1,6 +1,9 @@
+import os.path
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from torch.optim.lr_scheduler import *
 import torchvision
 import torchvision.datasets as datasets
 import torchvision.transforms as transforms
@@ -64,8 +67,6 @@ LEARNING_RATE = 1e-3
 MOMENTUM = 0.9
 NUM_EPOCHS = 50
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
-# mean_rgb=(0.4914, 0.4822, 0.4465),
-# std_rgb=(0.2023, 0.1994, 0.2010),
 transform1 = transforms.Compose([
     transforms.RandomHorizontalFlip(p=0.5),
     transforms.Resize([224, 224]),
@@ -88,6 +89,8 @@ test_loader = DataLoader(test_dataset, shuffle=False, batch_size=BATCH_SIZE)
 # weight_decay引入L2正则化
 optimizer = optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=MOMENTUM, weight_decay=5e-4)
 criterion = nn.CrossEntropyLoss()
+scheduler = ReduceLROnPlateau(optimizer, mode='max', factor=0.1, patience=2, threshold=0.5, threshold_mode='abs',
+                              min_lr=1e-5, verbose=True)
 
 
 def train(epoch):
@@ -100,7 +103,7 @@ def train(epoch):
         model.zero_grad()
         loss.backward()
         optimizer.step()
-        if (_ + 1) % 300 == 0:
+        if (_ + 1) % 500 == 0:
             print(f"Epoch: [{epoch + 1}/{NUM_EPOCHS}], LOSS: [{running_loss / 300}]")
             running_loss = 0.0
 
@@ -116,11 +119,20 @@ def test():
             _, pred_label = torch.max(y_pred, dim=1)
             total += label.shape[0]
             num_correct += (pred_label == label).sum().item()
-    print(f"Accuracy: {format(num_correct / total * 100, '.2f')}%")
+    acc = num_correct / total * 100
+    print(f"Accuracy: {format(acc, '.2f')}%")
     model.train()
+    return acc
 
 
 if __name__ == '__main__':
+    # if os.path.exists('VGG_net.ckpt'):
+    #     print("==> Loading Model")
+    #     model.load_state_dict(torch.load('VGG_net.ckpt'))
     for epoch in range(NUM_EPOCHS):
         train(epoch)
-        test()
+        accuracy = test()
+        scheduler.step(accuracy)
+        # if (epoch + 1) % 5 == 0:
+        #     print("==> Saving Model")
+        #     torch.save(model.state_dict(), 'VGG_net.ckpt')
