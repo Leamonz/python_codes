@@ -106,7 +106,7 @@ transforms = transforms.Compose([
 name = 'GanYu'
 # dataset = datasets.MNIST(root=r'D:/program_work/PyCharm/Usual/dataset', transform=transforms)
 # dataset = datasets.CelebA(root=r'../../dataset', transform=transforms, download=True)
-dataset = GanYuDataset('../../dataset/ganyu-final', transform=transforms)
+dataset = GanYuDataset('../dataset/ganyu-final', transform=transforms)
 loader = DataLoader(dataset=dataset, shuffle=True, batch_size=batch_size)
 gen = Generator(z_dim, img_channels, feature_g).to(device)
 disc = Discriminator(img_channels, feature_d).to(device)
